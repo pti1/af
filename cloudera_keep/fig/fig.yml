@@ -1,0 +1,9 @@
+master:
+  image: pti1/hadoopmaster
+  links:
+    - slave1
+slave1:
+  image: pti1/hadoopslave
+  links:
+    - master
+

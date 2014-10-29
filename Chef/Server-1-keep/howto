@@ -1,0 +1,2 @@
+
+docker run --privileged=true -d -p 443:443 -v ~/chef-logs:/var/log base/chef-server

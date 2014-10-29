@@ -1,0 +1,4 @@
+chefserver:
+  image: pti1/chefserver
+  hostname: chefserver
+

@@ -1,0 +1,6 @@
+PID=$(docker inspect --format {{.State.Pid}} chefserver)
+nsenter --target $PID --mount --uts --ipc --net --pid
+
+docker run --privileged -d -t --name chefserver -h chefserver pti1/chefserver
+
+docker run --privileged=true -d -p 443:443 -v ~/chef-logs:/var/log base/chef-server
