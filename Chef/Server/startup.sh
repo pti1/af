@@ -29,13 +29,20 @@ knife user create pascal -p pascal -a -d
 
 knife configure client /etc/chef
 
+# load all
+cd /chef-repo
+knife environment from file environments/*.rb
+knife cookbook upload -a
+knife role from file roles/*.rb
+
+
 chef-client -d -i 120 -s 5 -c /etc/chef/client.rb
 
-#chef-server-ctl user-create pascal pti pti pti@gmail.com pascal
-#chef-server-ctl org-create pascal_org the pascal_org --association_user pascal
+ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }'`
+echo "chef serveur ui: https://$ipaddress"
+echo "user is pascal, pwd is pascal"
 
 
-#tail -F /opt/chef-server/embedded/service/*/log/current
 
 /usr/sbin/sshd -D
 
