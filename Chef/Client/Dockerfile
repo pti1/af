@@ -49,6 +49,7 @@ RUN curl -L https://www.opscode.com/chef/install.sh \
   
 RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
 
+ADD 1_chefclient.sh /opt/docker_common_scripts/
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]
 
