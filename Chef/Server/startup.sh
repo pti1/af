@@ -10,6 +10,19 @@ sysctl -w kernel.shmmax=17179869184 # for postgres
 /opt/chef-server/embedded/bin/runsvdir-start &
 
 
+# reconfigure
+cat << EOF > /etc/chef-server/chef-server.rb
+server_name = "chefserver"
+api_fqdn server_name
+
+nginx['url'] = "https://#{server_name}"
+nginx['server_name'] = server_name
+lb['fqdn'] = server_name
+bookshelf['vip'] = server_name
+EOF
+
+chef-server-ctl reconfigure
+
 #now configure knife
 yes rootpwd | knife configure -i -y --defaults -r /chef-repo -u rooty
 knife user create pascal -p pascal -a -d

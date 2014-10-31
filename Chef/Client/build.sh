@@ -1,1 +1,1 @@
-docker build --no-cache=true -t pti1/chefclient .
+docker build --no-cache=false -t pti1/chefclient .

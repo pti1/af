@@ -24,13 +24,17 @@ RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 RUN echo 'Acquire::http::Proxy "http://192.168.0.21:8080";' > /etc/apt/apt.conf.d/proxy
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 ENV http_proxy http://192.168.0.21:8080/
-ENV https_proxy http://192.168.0.21:8080/
 
 
 RUN apt-get update 
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet git
+RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet
 RUN apt-get install -q -y --force-yes net-tools vim htop
 
+
+# install java
+# Install Java.
+RUN apt-get install -y openjdk-7-jdk
+ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
 RUN apt-get install -y apt-utils
 
@@ -40,17 +44,11 @@ RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
-# install chef-client
-RUN apt-get -yqq update \
-  && apt-get -yqq install curl build-essential libxml2-dev libxslt-dev git autoconf
 
-RUN curl -L https://www.opscode.com/chef/install.sh \
-  | bash > /dev/null
-  
-RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
-
-ADD startup.sh /opt/
-CMD ["/opt/startup.sh"]
+RUN apt-get install -y wget ruby
 
 
-EXPOSE 22 403 
+EXPOSE 9160 9042
+
+
+EXPOSE 22
