@@ -21,10 +21,10 @@ MAINTAINER PTI PTI, pti@coco.fr
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 
-RUN echo 'Acquire::http::Proxy "http://192.168.0.21:8080";' > /etc/apt/apt.conf.d/proxy
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-ENV http_proxy http://192.168.0.21:8080/
-ENV https_proxy http://192.168.0.21:8080/
+
+ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
+RUN /opt/docker_common_scripts/0_proxy.sh
 
 
 RUN apt-get update 
@@ -47,7 +47,7 @@ RUN apt-get -yqq update \
 RUN curl -L https://www.opscode.com/chef/install.sh \
   | bash > /dev/null
   
-RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
+#RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
 
 ADD 1_chefclient.sh /opt/docker_common_scripts/
 ADD startup.sh /opt/

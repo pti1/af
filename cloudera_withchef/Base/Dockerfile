@@ -26,7 +26,7 @@ RUN apt-get install -y apt-utils
 
 # THIS IS TO GET SSH
 RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
+#RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
 
