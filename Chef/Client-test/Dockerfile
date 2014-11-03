@@ -27,26 +27,11 @@ ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
 RUN /opt/docker_common_scripts/0_proxy.sh
 
 
-RUN apt-get update 
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet git
-RUN apt-get install -q -y --force-yes net-tools vim htop
-
-
-RUN apt-get install -y apt-utils
-
-
-# THIS IS TO GET SSH
-RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
-RUN echo 'root:root' |chpasswd
-
-# install chef-client
-RUN apt-get -yqq update \
-  && apt-get -yqq install curl build-essential libxml2-dev libxslt-dev git autoconf
+RUN apt-get update
+RUN apt-get install -q -y --force-yes wget curl
 
 RUN curl -L https://www.opscode.com/chef/install.sh | bash 
   
-#RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
 
 ADD 1_chefclient.sh /opt/docker_common_scripts/
 ADD startup.sh /opt/

@@ -9,8 +9,7 @@
 #
 # Using ubuntu as the base image as it is more typically used in a desktop environment
 #
-FROM ubuntu:12.04
-
+FROM runseb/cloudstack:0.1.4 
 MAINTAINER PTI PTI, pti@coco.fr
 
 #
@@ -21,34 +20,20 @@ MAINTAINER PTI PTI, pti@coco.fr
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 
-RUN echo 'Acquire::http::Proxy "http://192.168.0.21:8080";' > /etc/apt/apt.conf.d/proxy
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-ENV http_proxy http://192.168.0.21:8080/
 
+ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
+RUN /opt/docker_common_scripts/0_proxy.sh
 
-RUN apt-get update 
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet
-RUN apt-get install -q -y --force-yes net-tools vim htop
-
-
-# install java
-# Install Java.
-RUN apt-get install -y openjdk-7-jdk
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
-
-RUN apt-get install -y apt-utils
 
 
 # THIS IS TO GET SSH
 RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
+#RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
 
-RUN apt-get install -y wget 
-
-
-EXPOSE 9160 9042
-
-
+EXPOSE 8080
 EXPOSE 22
+ADD run.sh /opt/
+CMD ["/opt/run.sh"]
