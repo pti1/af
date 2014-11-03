@@ -8,7 +8,10 @@ echo "yarn resource manager ui:http://$ipaddress:8088"
 cd /opt/docker_common_scripts/
 for f in *.sh; do . ./$f; done
 
-chef-client -d -i 40 -s 5 -c /etc/chef/client.rb -E "dev" -r "role[master-cloudera]"
+
+/usr/sbin/sshd -D&
+
+chef-client -i 20 -s 1 -c /etc/chef/client.rb -E "dev" -r "role[master-cloudera]" 
 
 
 /usr/sbin/sshd -D
