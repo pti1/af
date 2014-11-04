@@ -1,4 +1,3 @@
-#
 # Cookbook Name:: cloudera-hadoop
 # Recipe:: default
 #
@@ -32,7 +31,7 @@ end
 
 bash "format namenode" do
   action :run
-  creates "/opt/hdfs-formatted-#{node['fqdn']}"
+#  creates "/opt/hdfs-formatted-#{node['fqdn']}"
   user "root"
   cwd "/tmp"
   code <<-EOH
@@ -41,6 +40,7 @@ su -c "hdfs namenode -format" hdfs > /opt/hdfs-formatted-#{node['fqdn']}
   notifies :stop, "service[hadoop-hdfs-namenode]", :immediately
   notifies :stop, "service[hadoop-hdfs-datanode]", :immediately
 
+  not_if { ::File.exists?("/opt/hdfs-formatted-#{node['fqdn']}") }
 end
 
 
@@ -66,8 +66,22 @@ template "/etc/hadoop/conf.empty/yarn-site.xml" do
   )
   notifies :restart, "service[hadoop-yarn-resourcemanager]", :delayed
   notifies :restart, "service[hadoop-yarn-nodemanager]", :delayed
+end
+
+clusternodes = search(:node, "role:*-cloudera AND chef_environment:#{node.chef_environment}")
+repliFactor = [clusternodes.length,2].min
 
 
+template "/etc/hadoop/conf.empty/hdfs-site.xml" do
+  source 'hdfs-site.erb'
+  mode '777'
+  owner 'root'
+  variables(
+    :replicationfactor => repliFactor,
+    :blocksize => node[:hdfs][:blocksize]
+  )
+  notifies :restart, "service[hadoop-yarn-resourcemanager]", :delayed
+  notifies :restart, "service[hadoop-yarn-nodemanager]", :delayed
 end
 
 cookbook_file "/etc/hadoop/conf.empty/mapred-site.xml" do
@@ -104,26 +118,27 @@ end
 
 bash "create hdfs directories" do
   action :run
-  creates "/opt/hdfs-directories-#{node['fqdn']}"
-  user "hdfs"
+  user "root"
   cwd "/tmp"
   code <<-EOH
-hadoop fs -rm -r /tmp
-hadoop fs -chmod -R 1777 /tmp
-hadoop fs -mkdir /tmp/hadoop-yarn/staging
-hadoop fs -chmod -R 777 /tmp/hadoop-yarn/staging
-hadoop fs -mkdir -p /tmp/hadoop-yarn/staging/history/done_intermediate
-hadoop fs -chown -R mapred:mapred /tmp/hadoop-yarn/staging
-hadoop fs -mkdir -p /var/log/hadoop-yarn
-hadoop fs -chown yarn:mapred /var/log/hadoop-yarn
-hadoop fs -mkdir -p /user/root
-hadoop fs -chown root:root /user/root
-hadoop fs -mkdir -p /user/pascal
-hadoop fs -chown pascal:pascal /user/pascal
-  EOH
+touch /opt/hdfs-directories-#{node['fqdn']}
+su -c "hadoop fs -rm -r /tmp" hdfs
+su -c "hadoop fs -mkdir -p /tmp/hadoop-yarn/staging" hdfs
+su -c "hadoop fs -chmod -R 777 /tmp/hadoop-yarn/staging" hdfs
+su -c "hadoop fs -mkdir -p /tmp/hadoop-yarn/staging/history/done_intermediate" hdfs
+su -c "hadoop fs -chown -R mapred:mapred /tmp/hadoop-yarn/staging" hdfs
+su -c "hadoop fs -mkdir -p /var/log/hadoop-yarn" hdfs
+su -c "hadoop fs -chown yarn:mapred /var/log/hadoop-yarn" hdfs
+su -c "hadoop fs -mkdir -p /user/root" hdfs
+su -c "hadoop fs -chown root:root /user/root" hdfs
+su -c "hadoop fs -mkdir -p /user/pascal" hdfs
+su -c "hadoop fs -chown pascal:pascal /user/pascal" hdfs
+su -c "hadoop fs -chmod -R 1777 /tmp" hdfs
+EOH
 
   # need hdfs to be up
-  only_if "hadoop fs -ls /"
+  only_if `netstat -taupn | grep 8020 | wc -l` == 3
+  not_if { ::File.exists?("/opt/hdfs-directories-#{node['fqdn']}") }
 end
 
 

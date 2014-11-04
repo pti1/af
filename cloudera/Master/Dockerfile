@@ -1,4 +1,4 @@
-# MapR single node cluster setup
+#MapR single node cluster setup
 #  - This has all the processes necessary to have a MapR server up 
 #    and running to be able to load and process data
 #
@@ -13,6 +13,9 @@ FROM pti1/hadoopbase
 
 MAINTAINER PTI PTI, pti@coco.fr
 
+
+ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
+RUN /opt/docker_common_scripts/0_proxy.sh
 
 RUN echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" > /etc/apt/sources.list.d/cloudera.list
 

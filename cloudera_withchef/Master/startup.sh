@@ -9,9 +9,8 @@ cd /opt/docker_common_scripts/
 for f in *.sh; do . ./$f; done
 
 
-/usr/sbin/sshd -D&
 
-chef-client -i 20 -s 1 -c /etc/chef/client.rb -E "dev" -r "role[master-cloudera]" 
+chef-client -d -i 20 -s 1 -c /etc/chef/client.rb -E "dev" -r "role[master-cloudera]" -L /var/log/chef-client.log 
 
 
 /usr/sbin/sshd -D

@@ -8,7 +8,7 @@
 #
 
 
-clusternodes = search(:node, "role:hadoop* AND chef_environment:#{node.chef_environment}")
+clusternodes = search(:node, "role:*-cloudera AND chef_environment:#{node.chef_environment}")
 
 clusternodes.each do |node|
   Chef::Log.info("#{node["name"]} has IP address #{node["ipaddress"]}")

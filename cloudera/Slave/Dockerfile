@@ -18,6 +18,10 @@ MAINTAINER PTI PTI, pti@coco.fr
 # http://doc.mapr.com/display/MapR/Installing+MapR+Software#InstallingMapRSoftware-mapr_repo
 #
 
+
+ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
+RUN /opt/docker_common_scripts/0_proxy.sh
+
 RUN echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" > /etc/apt/sources.list.d/cloudera.list
 
 RUN echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" >> /etc/apt/sources.list.d/clouderasrc.list

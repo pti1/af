@@ -9,7 +9,7 @@
 #
 # Using ubuntu as the base image as it is more typically used in a desktop environment
 #
-FROM ubuntu:12.04
+FROM ubuntu:14.04
 
 MAINTAINER PTI PTI, pti@coco.fr
 
@@ -29,16 +29,18 @@ RUN /opt/docker_common_scripts/0_proxy.sh
 
 
 RUN apt-get update 
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet
+RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet git
 RUN apt-get install -q -y --force-yes net-tools vim htop
+#RUN apt-get install -y apt-utils python-software-properties software-properties-common
+#RUN apt-add-repository -y ppa:ansible/ansible
+#RUN apt-get install -y ansible
+#RUN apt-get install -q -y --force-yes python-pip
+#RUN pip install ansible
+RUN apt-get install -q -y --force-yes python python-yaml python-paramiko python-jinja2 python-httplib2  build-essential
 
-
-# install java
-# Install Java.
-RUN apt-get install -y openjdk-7-jdk
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
-
-RUN apt-get install -y apt-utils
+RUN git clone https://github.com/ansible/ansible.git
+RUN apt-get install -q -y --force-yes python-setuptools
+RUN cd ansible && make && sudo make install
 
 
 # THIS IS TO GET SSH
@@ -46,11 +48,8 @@ RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
-
-RUN apt-get install -y wget ruby
-
-
-EXPOSE 9160 9042
+ADD startup.sh /opt/
+CMD ["/opt/startup.sh"]
 
 
 EXPOSE 22

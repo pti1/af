@@ -46,12 +46,31 @@ EOF2
   </proxies>
 </settings>
 EOF
+
+ cat << EOF2 >  /root/.gitconfig
+[http]
+        proxy = http://$proxyhost:$proxyport
+[https]
+        proxy = http://$proxyhost:$proxyport
+
+EOF2
+
+
+mkdir /root/pip
+cat << EOF3 >  /root/.pip/pip.conf
+[global]
+proxy = $proxyhost:$proxyport
+EOF3
+
+
 else
   echo "PTI: no proxy"
   rm -f /etc/apt/apt.conf.d/proxy
   rm -f /root/.wgetrc
   rm -f /root/.m2/settings.xml
   rm -f /root/.curlrc
+  rm -f /root/.gitconfig
+  rm -f /root/.pip/pip.conf
 fi
 
 . /root/.bashrc
