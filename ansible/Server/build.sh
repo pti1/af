@@ -1,1 +1,1 @@
-docker build --no-cache=false -t pti1/ansibleserver .
+docker build --no-cache=false -t pti1/ansibleserver:initialversion .

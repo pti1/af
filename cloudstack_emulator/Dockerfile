@@ -32,6 +32,7 @@ RUN apt-get install -y openssh-server
 #RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
+RUN cd /opt/cloudstack/;mvn -pl client install -Dsimulator
 
 EXPOSE 8080
 EXPOSE 22

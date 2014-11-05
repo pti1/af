@@ -16,13 +16,14 @@ useradd -m pascal
 
 echo "yarn hdfs config"
 su -c "hadoop fs -rm -r /tmp" hdfs
-su -c "hadoop fs -chmod -R 1777 /tmp"  hdfs
-su -c "hadoop fs -mkdir /tmp/hadoop-yarn/staging" hdfs
+su -c "hadoop fs -mkdir -p /tmp/hadoop-yarn/staging" hdfs
 su -c "hadoop fs -chmod -R 777 /tmp/hadoop-yarn/staging" hdfs
 su -c "hadoop fs -mkdir -p /tmp/hadoop-yarn/staging/history/done_intermediate" hdfs
 su -c "hadoop fs -chown -R mapred:mapred /tmp/hadoop-yarn/staging"  hdfs
 su -c "hadoop fs -mkdir -p /var/log/hadoop-yarn"  hdfs
 su -c "hadoop fs -chown yarn:mapred /var/log/hadoop-yarn"  hdfs
+su -c "hadoop fs -chmod -R 1777 /tmp"  hdfs
+
 
 echo "create users directories"
 su -c "hadoop fs -mkdir -p /user/root" hdfs

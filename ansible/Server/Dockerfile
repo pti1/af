@@ -45,7 +45,7 @@ RUN cd ansible && make && sudo make install
 
 # THIS IS TO GET SSH
 RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
+#RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
 ADD startup.sh /opt/

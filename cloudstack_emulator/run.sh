@@ -3,14 +3,21 @@
 cd /opt/docker_common_scripts/
 for f in *.sh; do . ./$f; done
 
+ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }'`
+echo "cloudstack ui: http://$ipaddress:8080/client"
+echo "user is admin, passw=password"
+
+/usr/sbin/sshd -D&
+
+
 
 service mysql restart
 cd /opt/cloudstack
-mvn -pl client jetty:run -Dsimulator
+mvn -o -pl client jetty:run -Dsimulator
 
 
 ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }'`
-echo "cloudstack ui: https://$ipaddress:8080"
+echo "cloudstack ui: http://$ipaddress:8080"
 
 
 /usr/sbin/sshd -D

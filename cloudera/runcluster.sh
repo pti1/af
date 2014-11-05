@@ -2,8 +2,8 @@ docker stop `docker ps -a | cut -d " " -f 1-1`
 docker rm `docker ps -a | cut -d " " -f 1-1`
 
 
-docker run -d --name dns -v /var/run/docker.sock:/docker.sock phensley/docker-dns  --domain example.com
-
+#docker run -d --name dns -v /var/run/docker.sock:/docker.sock phensley/docker-dns  --domain example.com
+docker run -d --name dns -v /var/run/docker.sock:/docker.sock pti1/dns:initialversion  --domain example.com
 
 
 docker run -d -t -h master.example.com --name master --dns $(docker inspect -f '{{.NetworkSettings.IPAddress}}' dns) --dns-search example.com pti1/hadoopmaster
