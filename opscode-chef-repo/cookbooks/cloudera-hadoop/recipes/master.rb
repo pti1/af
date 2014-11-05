@@ -6,16 +6,22 @@
 # All rights reserved - Do Not Redistribute
 #
 
-service "hadoop-hdfs-datanode" do
-  supports :restart => true, :start => true, :stop => true
-  action :nothing
-end
-
 
 service "hadoop-hdfs-namenode" do
   supports :restart => true, :start => true, :stop => true
   action :nothing
 end
+
+service "hadoop-hdfs-datanode" do
+  supports :restart => true, :start => true, :stop => true
+  action :nothing
+end
+
+service "hadoop-yarn-resourcemanager" do
+  supports :restart => true, :start => true, :stop => true
+  action :nothing
+end
+
 
 service "hadoop-yarn-nodemanager" do
   supports :restart => true, :start => true, :stop => true
@@ -23,10 +29,6 @@ service "hadoop-yarn-nodemanager" do
 end
 
 
-service "hadoop-yarn-resourcemanager" do
-  supports :restart => true, :start => true, :stop => true
-  action :nothing
-end
 
 
 bash "format namenode" do
@@ -35,6 +37,9 @@ bash "format namenode" do
   user "root"
   cwd "/tmp"
   code <<-EOH
+mkdir -p /mnt/ext/hadoop/hdfs/namenode
+chmod -R 777 /mnt/ext/hadoop/hdfs/namenode
+sleep 1
 su -c "hdfs namenode -format" hdfs > /opt/hdfs-formatted-#{node['fqdn']}
   EOH
   notifies :stop, "service[hadoop-hdfs-namenode]", :immediately
@@ -90,21 +95,21 @@ cookbook_file "/etc/hadoop/conf.empty/mapred-site.xml" do
  owner 'root'
 end
 
-service "hadoop-hdfs-datanode" do
-  action :start
-end
-
-
 service "hadoop-hdfs-namenode" do
   action :start
 end
 
-service "hadoop-yarn-nodemanager" do
+
+service "hadoop-hdfs-datanode" do
+  action :start
+end
+
+service "hadoop-yarn-resourcemanager" do
   action :start
 end
 
 
-service "hadoop-yarn-resourcemanager" do
+service "hadoop-yarn-nodemanager" do
   action :start
 end
 

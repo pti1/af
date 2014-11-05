@@ -1,1 +1,1 @@
-docker build -t pti1/hadoopmaster .
+docker build -t pti1/hadoopmaster:secondversion .

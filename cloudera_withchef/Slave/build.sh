@@ -1,1 +1,1 @@
-docker build -t pti1/hadoopslave .
+docker build -t pti1/hadoopslave_chef .

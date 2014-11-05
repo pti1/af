@@ -1,1 +1,1 @@
-docker build -t pti1/cloudstack:initialversion .
+docker build -t pti1/cloudstack:secondversion .

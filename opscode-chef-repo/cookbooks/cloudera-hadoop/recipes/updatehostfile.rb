@@ -8,20 +8,49 @@
 #
 
 
+bash "restart when hostfilechange" do
+  action :nothing
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
+service hadoop-hdfs-namenode restart
+service hadoop-hdfs-datanode restart
+EOH
+end
+
+
+
 clusternodes = search(:node, "role:*-cloudera AND chef_environment:#{node.chef_environment}")
+clusternodes.sort! { |a, b| a.fqdn <=> b.fqdn }
 
-clusternodes.each do |node|
-  Chef::Log.info("#{node["name"]} has IP address #{node["ipaddress"]}")
 
-  ruby_block "ensure node can resolve API FQDN" do
+clusternodes.each do |aNode|
+  Chef::Log.info("#{aNode["fqdn"]} has IP address #{aNode["ipaddress"]}")
+
+  ruby_block "update /etc/hosts" do
     block do
       fe = Chef::Util::FileEdit.new("/etc/hosts")
-      fe.insert_line_if_no_match(/#{node["name"]}/,
-                               "#{node["ipaddress"]} #{node["name"]}")
+      fe.insert_line_if_no_match(/#{aNode["hostname"]}/,
+                               "#{aNode["ipaddress"]} #{aNode["fqdn"]} #{aNode["hostname"]}")
+
+      fe.search_file_replace_line(/#{aNode["hostname"]}/,
+                               "#{aNode["ipaddress"]} #{aNode["fqdn"]} #{aNode["hostname"]}")
+
       fe.write_file
     end
+    action :nothing
   end
 end
 
 
+template "/tmp/hosts" do
+  source 'hosts.erb'
+  mode '777'
+  owner 'root'
+  variables(
+    :nodes => clusternodes
+  )
+  notifies :create, "ruby_block[update /etc/hosts]", :immediately
+  notifies :run, "bash[restart when hostfilechange]", :delayed
+end
 

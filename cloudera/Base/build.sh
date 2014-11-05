@@ -1,1 +1,1 @@
-docker build --no-cache=true -t pti1/hadoopbase .
+docker build --no-cache=false -t pti1/hadoopbase:secondversion .
