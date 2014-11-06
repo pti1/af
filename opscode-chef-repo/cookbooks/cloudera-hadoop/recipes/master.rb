@@ -31,22 +31,6 @@ end
 
 
 
-bash "format namenode" do
-  action :run
-#  creates "/opt/hdfs-formatted-#{node['fqdn']}"
-  user "root"
-  cwd "/tmp"
-  code <<-EOH
-mkdir -p /mnt/ext/hadoop/hdfs/namenode
-chmod -R 777 /mnt/ext/hadoop/hdfs/namenode
-sleep 1
-su -c "hdfs namenode -format" hdfs > /opt/hdfs-formatted-#{node['fqdn']}
-  EOH
-  notifies :stop, "service[hadoop-hdfs-namenode]", :immediately
-  notifies :stop, "service[hadoop-hdfs-datanode]", :immediately
-
-  not_if { ::File.exists?("/opt/hdfs-formatted-#{node['fqdn']}") }
-end
 
 
 
@@ -94,6 +78,29 @@ cookbook_file "/etc/hadoop/conf.empty/mapred-site.xml" do
  mode '777'
  owner 'root'
 end
+
+
+### format namenode after config file, cause otherwise it formats default paths and never yours
+bash "format namenode" do
+  action :run
+#  creates "/opt/hdfs-formatted-#{node['fqdn']}"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
+mkdir -p /mnt/ext/hadoop/hdfs/namenode
+chmod -R 777 /mnt/ext/hadoop/hdfs/namenode
+sleep 1
+su -c "hdfs namenode -format -force -nonInteractive > /tmp/hdfs-formatted-#{node['fqdn']} 2>&1" hdfs 
+  EOH
+  #notifies :stop, "service[hadoop-hdfs-namenode]", :immediately
+  #notifies :stop, "service[hadoop-hdfs-datanode]", :immediately
+
+  not_if { ::File.exists?("/tmp/hdfs-formatted-#{node['fqdn']}") }
+end
+
+
+
+
 
 service "hadoop-hdfs-namenode" do
   action :start

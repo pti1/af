@@ -24,11 +24,12 @@ clusternodes = search(:node, "role:*-cloudera AND chef_environment:#{node.chef_e
 clusternodes.sort! { |a, b| a.fqdn <=> b.fqdn }
 
 
-clusternodes.each do |aNode|
-  Chef::Log.info("#{aNode["fqdn"]} has IP address #{aNode["ipaddress"]}")
 
   ruby_block "update /etc/hosts" do
     block do
+clusternodes.each do |aNode|
+  Chef::Log.info("#{aNode["fqdn"]} has IP address #{aNode["ipaddress"]}")
+
       fe = Chef::Util::FileEdit.new("/etc/hosts")
       fe.insert_line_if_no_match(/#{aNode["hostname"]}/,
                                "#{aNode["ipaddress"]} #{aNode["fqdn"]} #{aNode["hostname"]}")
@@ -38,9 +39,9 @@ clusternodes.each do |aNode|
 
       fe.write_file
     end
+end
     action :nothing
   end
-end
 
 
 template "/tmp/hosts" do
