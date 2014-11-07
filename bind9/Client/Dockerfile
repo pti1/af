@@ -21,7 +21,8 @@ RUN apt-get install -y apt-utils
 
 
 
-RUN apt-get install -q -y --force-yes bind9
+RUN apt-get install -q -y --force-yes bind9 dnsutils 
+
 
 ADD named.conf /etc/bind/named.conf
 ADD named.conf.options /etc/bind/named.conf.options
