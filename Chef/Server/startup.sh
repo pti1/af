@@ -36,7 +36,7 @@ knife cookbook upload -a
 knife role from file roles/*.rb
 
 
-chef-client -d -i 120 -s 5 -c /etc/chef/client.rb
+chef-client -d -i 120 -s 5 -c /etc/chef/client.rb -E "admin"
 
 ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }'`
 echo "chef serveur ui: https://$ipaddress"

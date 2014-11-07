@@ -9,7 +9,7 @@
 #
 # Using ubuntu as the base image as it is more typically used in a desktop environment
 #
-FROM ubuntu:12.04
+FROM pti1/chefclient:initialversion
 
 MAINTAINER PTI PTI, pti@coco.fr
 
@@ -23,34 +23,24 @@ RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
+
 ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
 RUN /opt/docker_common_scripts/0_proxy.sh
 
 
 RUN apt-get update 
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet git
+RUN apt-get install -q -y --force-yes ganglia-monitor rrdtool gmetad ganglia-webfrontend
 RUN apt-get install -q -y --force-yes net-tools vim htop
 
 
-RUN apt-get install -y apt-utils
+RUN cp /etc/ganglia-webfrontend/apache.conf /etc/apache2/sites-enabled/ganglia.conf
 
 
 # THIS IS TO GET SSH
 RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
-# install chef-client
-RUN apt-get -yqq update \
-  && apt-get -yqq install curl build-essential libxml2-dev libxslt-dev git autoconf
-
-RUN . /root/.bashrc && curl -L https://www.opscode.com/chef/install.sh | bash 
-  
-#RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
-
-ADD 1_chefclient.sh /opt/docker_common_scripts/
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]
 
-
-EXPOSE 22 403 
+EXPOSE 22 80

@@ -9,7 +9,7 @@
 #
 # Using ubuntu as the base image as it is more typically used in a desktop environment
 #
-FROM pti1/chefclient
+FROM pti1/chefclient:initialversion
 
 MAINTAINER PTI PTI, pti@coco.fr
 

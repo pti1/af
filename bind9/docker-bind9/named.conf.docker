@@ -1,0 +1,12 @@
+zone "example.com" {
+    type master;
+    file "/etc/bind/zones/db.example.com"; # zone file path
+#    allow-recursion { any; };
+};
+
+
+zone "17.172.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.17.172";  # 10.128.0.0/16 subnet
+#    allow-recursion { any; };
+};

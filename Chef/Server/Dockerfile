@@ -41,12 +41,12 @@ RUN echo 'root:root' |chpasswd
 RUN apt-get -yqq update \
   && apt-get -yqq install curl build-essential libxml2-dev libxslt-dev git autoconf
 
-RUN curl -L https://www.opscode.com/chef/install.sh |  bash
+RUN . /root/.bashrc && curl -L https://www.opscode.com/chef/install.sh |  bash
 #RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
 
 #setup chef repository
-RUN apt-get install -q -y --force-yes git
-RUN cd /etc/chef-server && git clone https://github.com/opscode/chef-repo.git
+#RUN apt-get install -q -y --force-yes git
+#RUN cd /etc/chef-server && git clone https://github.com/opscode/chef-repo.git
 
 #now configure knife
 #RUN yes rootpwd | knife configure -i -y --defaults -r /chef-repo -u rooty

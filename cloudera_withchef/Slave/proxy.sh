@@ -8,8 +8,9 @@ unset http_proxy
 unset https_proxy
 
 
-sed -i '/export http_proxy/d' /root/.bashrc
-sed -i '/export https_proxy/d' /root/.bashrc
+sed -i '/http_proxy/d' /root/.bashrc
+sed -i '/https_proxy/d' /root/.bashrc
+sed -i '/ftp_proxy/d' /root/.bashrc
 
 if  [ "$isproxy" = true ]; then
   echo "PTI: using proxy"
@@ -18,9 +19,13 @@ if  [ "$isproxy" = true ]; then
   echo "Acquire::http::Proxy \"http://$proxyhost:$proxyport\";" > /etc/apt/apt.conf.d/proxy
   echo "export http_proxy=http://$proxyhost:$proxyport/" >> /root/.bashrc
   echo "export https_proxy=http://$proxyhost:$proxyport/" >> /root/.bashrc
+  echo "export ftp_proxy=http://$proxyhost:$proxyport/" >> /root/.bashrc
   export http_proxy=http://$proxyhost:$proxyport/
   export https_proxy=http://$proxyhost:$proxyport/
-
+  env http_proxy=http://$proxyhost:$proxyport/
+  env https_proxy=http://$proxyhost:$proxyport/
+   
+ 
   cat << EOF1 > /root/.wgetrc
 http_proxy = http://$proxyhost:$proxyport/
 use_proxy = on
@@ -56,7 +61,7 @@ EOF
 EOF2
 
 
-mkdir /root/pip
+mkdir /root/.pip
 cat << EOF3 >  /root/.pip/pip.conf
 [global]
 proxy = $proxyhost:$proxyport
