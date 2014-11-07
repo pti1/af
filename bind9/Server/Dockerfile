@@ -36,9 +36,11 @@ RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
 #configure bind9
+# https://www.erianna.com/nsupdate-dynamic-dns-updates-with-bind9
 RUN ln -s /var/lib/bind /etc/bind/zones
 RUN cd /tmp && dnssec-keygen -a HMAC-MD5 -b 128 -n HOST example.com. 
-RUN kiki=`more /tmp/*example*.key | cut -d ' ' -f 7` && echo $titi > /tmp/poof
+#RUN export pif=`more /tmp/*example*.key | cut -d ' ' -f 7` && sed -i s/#secret#/$pif/g /etc/bind/named.conf.local
+RUN /bin/bash -c "pif=`more /tmp/*example*.key | cut -d ' ' -f 7` && sed -i s/#secret#/$pif/g /etc/bind/named.conf.local"
 RUN chmod -R 640 /tmp/Kexample.com*
 
 

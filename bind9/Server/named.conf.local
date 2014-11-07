@@ -2,3 +2,9 @@ key "example.com." {
   algorithm hmac-md5;
   secret "#secret#";
 };
+
+zone "example.com" {
+        type master;
+        file "/var/lib/bind/example.com.db";
+        allow-update { key "example.com."; };
+};
