@@ -5,6 +5,14 @@ key "example.com." {
 
 zone "example.com" {
         type master;
-        file "/var/lib/bind/example.com.db";
+        file "/etc/bind/db.example";
         allow-update { key "example.com."; };
 };
+
+
+zone "172.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.172";  # 10.128.0.0/16 subnet
+    allow-update { key "example.com."; };
+};
+

@@ -13,11 +13,11 @@ echo "user is admin, passw=password"
 
 service mysql restart
 cd /opt/cloudstack
-mvn -o -pl client jetty:run -Dsimulator
+mvn -o -pl client jetty:run -Dsimulator&
 
 
 ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }'`
-echo "cloudstack ui: http://$ipaddress:8080"
+echo "cloudstack ui: http://$ipaddress:8080/client"
 
 
 /usr/sbin/sshd -D
