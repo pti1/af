@@ -1,8 +1,6 @@
 /* This configuration is as close to 2.5.x default behavior as possible 
    The values closely match ./gmond/metric.h definitions in 2.5.x */ 
 globals {                    
-  #override_hostname = <%=@gmondhostname%>
-  #override_ip = <%=@gmondip%>
   daemonize = yes              
   setuid = yes             
   user = ganglia              
@@ -35,8 +33,8 @@ host {
    used to only support having a single channel */ 
 udp_send_channel { 
   #bind_hostname = yes
-  #mcast_join = 239.2.11.71 
-  host = <%=@gmetadhostname%>
+  mcast_join = 239.2.11.71 
+  #host = <%=@gmetadhostname%>
   #port = <%=@env.to_i(36)%>
   port = 8649
   ttl = 1 
@@ -44,7 +42,7 @@ udp_send_channel {
 
 /* You can specify as many udp_recv_channels as you like as well. */ 
 udp_recv_channel { 
-  #mcast_join = 239.2.11.71 
+  mcast_join = 239.2.11.71 
   # port = <%=@env.to_i(36)%> 
   port = 8649
   #bind = 239.2.11.71 

@@ -1,1 +1,1 @@
-docker build --no-cache=false -t pti1/gangliaserver:initialversion .
+docker build --no-cache=false -t pti1/gangliaserver:secondversion .

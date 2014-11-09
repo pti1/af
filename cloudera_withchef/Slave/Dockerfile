@@ -9,7 +9,7 @@
 #
 # Using ubuntu as the base image as it is more typically used in a desktop environment
 #
-FROM pti1/chefclient:initialversion
+FROM pti1/chefclient:secondversion
 
 MAINTAINER PTI PTI, pti@coco.fr
 
@@ -43,4 +43,3 @@ EXPOSE 7180 7183 7182 7432 50020 50070 50010 50075 8040 8042 47314 13562 8030 80
 
 EXPOSE 1004 1006 8020 50470 50090 50495 8485 8480 8032 8033 8088 8041 10020 19888
 
-RUN apt-get install -q -y --force-yes dnsutils
