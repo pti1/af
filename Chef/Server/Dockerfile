@@ -23,11 +23,12 @@ RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
+ADD nsupdate.sh /opt/docker_common_scripts/1_nsupdate.sh
 RUN /opt/docker_common_scripts/0_proxy.sh
 
 RUN apt-get update
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet
-RUN apt-get install -q -y --force-yes net-tools vim htop
+RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils ruby
+
 
 # THIS IS TO GET SSH
 RUN apt-get install -y openssh-server
@@ -42,17 +43,6 @@ RUN apt-get -yqq update \
   && apt-get -yqq install curl build-essential libxml2-dev libxslt-dev git autoconf
 
 RUN . /root/.bashrc && curl -L https://www.opscode.com/chef/install.sh |  bash
-#RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
-
-#setup chef repository
-#RUN apt-get install -q -y --force-yes git
-#RUN cd /etc/chef-server && git clone https://github.com/opscode/chef-repo.git
-
-#now configure knife
-#RUN yes rootpwd | knife configure -i -y --defaults -r /chef-repo -u rooty
-#RUN knife user create pascal -p pascal -a -d
-
-
 
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]

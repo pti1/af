@@ -1,1 +1,1 @@
-docker build --no-cache=false -t pti1/bind9:initialversion .
+docker build --no-cache=false -t pti1/bind9:secondversion .
