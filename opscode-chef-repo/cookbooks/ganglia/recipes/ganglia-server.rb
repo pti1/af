@@ -8,11 +8,10 @@
 
 #sudo service ganglia-monitor restart && sudo service gmetad restart && sudo service apache2 restart
 
-service "ganglia-monitor" do
-  action :nothing
-end
 
 service "gmetad" do
+  supports :restart => true, :start => true, :stop => true, :reload => true
+  stop_command "kill `pidof gmetad`"
   action :nothing
 end
 
@@ -31,30 +30,20 @@ environments.sort! { |a, b| a.name <=> b.name }.each{|oneenv|
   port = 8649
   nodeinenv = search(:node,"chef_environment:#{oneenv.name}")
 
+  gmondhost = ""
   if (nodeinenv.size == nil or nodeinenv.length == 0) 
   then
-    next
+    #next
+    gmondhost="na.example.com"
+  else
+    nodeinenv.sort!{ |a, b| a.name <=> b.name}
+    electednode=nodeinenv[0]
+    gmondhost = electednode.name
   end
 
-  gmonds += "data_source \"#{oneenv}\" 30"
 
-  nodeinenv.each{|onenode|
-    Chef::Log.info("#{onenode} = #{onenode.instance_variables} and #{onenode.attributes}")
-  }
 
-  nodeinenv.sort! { |a, b| 
-    if (a.attribute?(:fqdn) and b.attribute?(:fqdn)) 
-       then 
-         a.fqdn <=> b.fqdn 
-    else
-         a.name <=> b.name
-    end
-  }
-
-  nodeinenv.each{|onenode|
-    gmonds += " #{onenode['fqdn']}:#{port}"
-  }
- 
+  gmonds += "data_source \"#{oneenv}\" 30 #{gmondhost}:#{port}"
   gmonds += "\n"   
 
 }
@@ -70,14 +59,11 @@ template "/etc/ganglia/gmetad.conf" do
     :gmonds => gmonds
   )
 
-  notifies :restart, "service[ganglia-monitor]", :delayed
-  notifies :restart, "service[gmetad]", :delayed
+  notifies :stop, "service[gmetad]", :immediately
+
   notifies :restart, "service[apache2]", :delayed
 end
 
-service "ganglia-monitor" do
-  action :start
-end
 
 service "gmetad" do
   action :start

@@ -2,7 +2,11 @@
 
 
 cd /opt/docker_common_scripts/
-for f in *.sh; do . ./$f & done
+for f in *.sh;
+do 
+  chmod 777 ./$f
+  nohup ./$f &
+done
 
 
  

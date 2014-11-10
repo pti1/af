@@ -93,4 +93,4 @@ cat /root/.m2/settings.xml
 echo "5) env proxy"
 env | grep proxy
 
-
+exit 0 

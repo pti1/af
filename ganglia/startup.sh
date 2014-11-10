@@ -5,9 +5,14 @@ ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }
 echo "ganglia ui: http://$ipaddress/ganglia"
 
 cd /opt/docker_common_scripts/
-for f in *.sh; do . ./$f & done
+for f in *.sh; 
+do 
+chmod 777 ./$f
+nohup ./$f & 
+done
 
-service ganglia-monitor restart && gmetad restart && service apache2 restart
+service gmetad restart 
+service apache2 restart
 
 chef-client -d -i 20 -s 1 -c /etc/chef/client.rb -E "admin" -r "recipe[ganglia::ganglia-server]" -L /var/log/chef-client.log
 

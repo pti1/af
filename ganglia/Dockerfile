@@ -28,11 +28,16 @@ ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
 RUN /opt/docker_common_scripts/0_proxy.sh
 
 
+# attention "service ganglia stop does not work"
+
 #RUN echo "deb http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" > /etc/apt/sources.list.d/ganglia.list
 #RUN echo "deb-src http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" >> /etc/apt/sources.list.d/ganglia.list
 
 RUN apt-get update 
-RUN apt-get install -q -y --force-yes ganglia-monitor rrdtool gmetad ganglia-webfrontend 
+RUN apt-get install -q -y --force-yes rrdtool gmetad 
+
+RUN apt-get install -q -y --force-yes ganglia-webfrontend 
+RUN cp /etc/ganglia-webfrontend/apache.conf /etc/apache2/sites-enabled/ganglia.conf
 
 
 # add ganglia web 2
