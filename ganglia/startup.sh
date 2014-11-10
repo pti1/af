@@ -7,8 +7,8 @@ echo "ganglia ui: http://$ipaddress/ganglia"
 cd /opt/docker_common_scripts/
 for f in *.sh; 
 do 
-chmod 777 ./$f
-nohup ./$f & 
+ chmod 777 ./$f
+  ./$f 
 done
 
 service gmetad restart 

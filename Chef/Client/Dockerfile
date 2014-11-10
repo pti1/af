@@ -24,15 +24,20 @@ RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
-ADD nsupdate.sh /opt/docker_common_scripts/1_nsupdate.sh
 RUN /opt/docker_common_scripts/0_proxy.sh
 
 RUN apt-get update
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils git
+RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils git cron
 
+
+# provide nsupdate
+ADD nsupdate.sh /opt/
+ADD nsupdate.sh /opt/docker_common_scripts/1_nsupdate.sh
+ADD crontab /etc/
+RUN cron
 
 # THIS IS TO GET SSH
-RUN apt-get install -y openssh-server
+RUN apt-get install -q -y --force-yes openssh-server
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
@@ -44,7 +49,7 @@ RUN . /root/.bashrc && curl -L https://www.opscode.com/chef/install.sh | bash
   
 #RUN /opt/chef/embedded/bin/gem install berkshelf > /dev/null
 
-ADD 1_chefclient.sh /opt/docker_common_scripts/
+ADD 2_chefclient.sh /opt/docker_common_scripts/
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]
 

@@ -17,16 +17,13 @@ $ECHO "zone 172.in-addr.arpa" >> /tmp/nsupdate
 $ECHO "update add $REVERSEIP.in-addr.arpa. 3600 PTR $host" >> /tmp/nsupdate
 $ECHO "send" >> /tmp/nsupdate
 
-while true; do 
-  echo "lauching nsupdate"
-  $NSUPDATE -k /etc/bind/K*.key -v /tmp/nsupdate 2>&1
+echo "lauching nsupdate"
+$NSUPDATE -k /etc/bind/K*.key -v /tmp/nsupdate 2>&1
 
-  echo "now verify all us ok"
-  echo "dig:pti"
-  dig @dns.example.com $host +short 
-  echo "dig:revpti"
-  dig @dns.example.com -x $IP +short
+echo "now verify all us ok"
+echo "dig:pti"
+dig @dns.example.com $host +short 
+echo "dig:revpti"
+dig @dns.example.com -x $IP +short
 
-  sleep 3600
-done
 
