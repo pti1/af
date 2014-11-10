@@ -28,17 +28,23 @@ ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
 RUN /opt/docker_common_scripts/0_proxy.sh
 
 
+#RUN echo "deb http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" > /etc/apt/sources.list.d/ganglia.list
+#RUN echo "deb-src http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" >> /etc/apt/sources.list.d/ganglia.list
+
 RUN apt-get update 
-RUN apt-get install -q -y --force-yes ganglia-monitor rrdtool gmetad ganglia-webfrontend
-RUN apt-get install -q -y --force-yes net-tools vim htop
+RUN apt-get install -q -y --force-yes ganglia-monitor rrdtool gmetad ganglia-webfrontend 
 
 
-RUN cp /etc/ganglia-webfrontend/apache.conf /etc/apache2/sites-enabled/ganglia.conf
+# add ganglia web 2
+#ADD apache.conf /opt/
+#RUN git clone https://github.com/ganglia/ganglia-web.git && \
+#    cd ganglia-web && \
+#    make install && \
+#    apt-get install -q -y --force-yes apache2 libapache2-mod-php5 php5-gd rrdtool && \
+#    cp /opt/apache.conf /etc/apache2/sites-available/ganglia && \
+#    a2dissite default && a2ensite ganglia && service apache2 reload
 
 
-# THIS IS TO GET SSH
-RUN apt-get install -y openssh-server
-RUN echo 'root:root' |chpasswd
 
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]

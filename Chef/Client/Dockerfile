@@ -28,7 +28,7 @@ ADD nsupdate.sh /opt/docker_common_scripts/1_nsupdate.sh
 RUN /opt/docker_common_scripts/0_proxy.sh
 
 RUN apt-get update
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils ruby git
+RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils git
 
 
 # THIS IS TO GET SSH

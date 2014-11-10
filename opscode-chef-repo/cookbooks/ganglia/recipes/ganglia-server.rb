@@ -36,9 +36,22 @@ environments.sort! { |a, b| a.name <=> b.name }.each{|oneenv|
     next
   end
 
-  gmonds += "data_source \"#{oneenv}\""
+  gmonds += "data_source \"#{oneenv}\" 30"
 
-  nodeinenv.sort! { |a, b| a.fqdn <=> b.fqdn }.each{|onenode|
+  nodeinenv.each{|onenode|
+    Chef::Log.info("#{onenode} = #{onenode.instance_variables} and #{onenode.attributes}")
+  }
+
+  nodeinenv.sort! { |a, b| 
+    if (a.attribute?(:fqdn) and b.attribute?(:fqdn)) 
+       then 
+         a.fqdn <=> b.fqdn 
+    else
+         a.name <=> b.name
+    end
+  }
+
+  nodeinenv.each{|onenode|
     gmonds += " #{onenode['fqdn']}:#{port}"
   }
  
