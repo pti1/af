@@ -3,10 +3,12 @@
 
  
 ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }'`
-echo "chef serveur ui: https://$ipaddress"
+echo "ansible server: $ipaddress"
 
-/usr/sbin/sshd -D
+/etc/rc.local
 
+echo "SLEEPING...."
+sleep 100000
 
 
 

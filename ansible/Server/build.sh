@@ -1,1 +1,1 @@
-docker build --no-cache=false -t pti1/ansibleserver:nextversion .
+docker build --no-cache=false -t pti1/ansibleserver:secondversion .
