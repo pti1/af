@@ -13,9 +13,6 @@ FROM pti1/chefclient:secondversion
 
 MAINTAINER PTI PTI, pti@coco.fr
 
-ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
-RUN /opt/docker_common_scripts/0_proxy.sh
-
 
 RUN apt-get install -y openjdk-7-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64

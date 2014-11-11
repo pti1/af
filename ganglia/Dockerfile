@@ -13,45 +13,34 @@ FROM pti1/chefclient:secondversion
 
 MAINTAINER PTI PTI, pti@coco.fr
 
-#
-# Add necessary repos for installation
-# http://doc.mapr.com/display/MapR/Installing+MapR+Software#InstallingMapRSoftware-mapr_repo
-#
-
-ENV DEBIAN_FRONTEND noninteractive
-RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
-
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 
-ADD proxy.sh /opt/docker_common_scripts/0_proxy.sh
-RUN /opt/docker_common_scripts/0_proxy.sh
+#RUN echo "deb http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" > /etc/apt/sources.list.d/ganglia.list
+#RUN echo "deb-src http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" >> /etc/apt/sources.list.d/ganglia.list
 
-
-# attention "service ganglia stop does not work"
-
-RUN echo "deb http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" > /etc/apt/sources.list.d/ganglia.list
-RUN echo "deb-src http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" >> /etc/apt/sources.list.d/ganglia.list
-
-RUN apt-get update 
+#RUN apt-get update -o Dir::Etc::sourcelist="ganglia.list" 
+RUN apt-get update
 RUN apt-get install -q -y --force-yes rrdtool gmetad 
 
-#RUN apt-get install -q -y --force-yes ganglia-webfrontend 
-#RUN cp /etc/ganglia-webfrontend/apache.conf /etc/apache2/sites-enabled/ganglia.conf
+
+RUN \
+mkdir -p /usr/share/ganglia-webfrontend/lib/dwoo/cache && \
+mkdir -p /usr/share/ganglia-webfrontend/lib/dwoo/compiled && \
+apt-get install -q -y --force-yes ganglia-webfrontend 
+
+RUN cp /etc/ganglia-webfrontend/apache.conf /etc/apache2/sites-enabled/ganglia.conf
 
 
 # add ganglia web 2
-ADD apache.conf /opt/
-RUN git clone https://github.com/ganglia/ganglia-web.git && \
-    cd ganglia-web && \
-    make install && \
-    apt-get install -q -y --force-yes apache2 libapache2-mod-php5 php5-gd rrdtool && \
-    cp /opt/apache.conf /etc/apache2/sites-available/ganglia && \
-    a2dissite default && a2ensite ganglia && service apache2 reload
+#ADD apache.conf /opt/
+#RUN git clone https://github.com/ganglia/ganglia-web.git && \
+#    cd ganglia-web && \
+#    make install && \
+#    apt-get install -q -y --force-yes apache2 libapache2-mod-php5 php5-gd rrdtool && \
+#    cp /opt/apache.conf /etc/apache2/sites-available/ganglia && \
+#    a2dissite default && a2ensite ganglia && service apache2 reload
 
-
-
-ADD startup.sh /opt/
-CMD ["/opt/startup.sh"]
 
 EXPOSE 22 80
+ADD startup.sh /opt/
+CMD ["/opt/startup.sh"]

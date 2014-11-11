@@ -6,11 +6,11 @@
 # All rights reserved - Do Not Redistribute
 #
 
-apt_repository 'ganglia' do
-  uri        'http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu'
-  components ['main']
-  distribution 'precise'
-end
+#apt_repository 'ganglia' do
+#  uri        'http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu'
+#  components ['main']
+#  distribution 'precise'
+#end
 
 
 package "ganglia-monitor" do
