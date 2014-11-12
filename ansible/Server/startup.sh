@@ -7,6 +7,10 @@ echo "ansible server: $ipaddress"
 
 /etc/rc.local
 
+#echo -e  'y\n'|ssh-keygen -q -t rsa -N "" -f ~/.ssh/id_rsa && \
+#cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+
+
 echo "SLEEPING...."
 sleep 100000
 

@@ -22,7 +22,6 @@ RUN /opt/docker_common_scripts/1_launchbuild.sh
 
 
 RUN . /root/.bashrc && \
- export | grep -i proxy && \ 
  apt-get update && \
  apt-get install -q -y --force-yes build-essential && \
  apt-get install -q -y --force-yes python-pip python-dev git -y 
@@ -34,8 +33,17 @@ RUN . /root/.bashrc && \
  if [ -z "$http_proxy" ]; then pip install PyYAML jinja2 paramiko; else pip install --proxy $http_proxy PyYAML jinja2 paramiko;  fi && \
  git clone https://github.com/ansible/ansible.git && \
  cd ansible && \
+ git submodule update --init --recursive && \
  make install && \
  mkdir /etc/ansible 
+
+RUN echo -e  'y\n'|ssh-keygen -q -t rsa -N "" -f ~/.ssh/id_rsa && \
+cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+
+ADD ssh-config /root/.ssh/config
+VOLUME /root/.ssh
+
+
 
 ADD common_scripts/* /opt/docker_common_scripts/
 

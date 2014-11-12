@@ -1,0 +1,13 @@
+- hosts: web
+  tasks:
+    - name: cdh5 repo
+      apt_repository: repo='deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib' state=present
+      apt_repository: repo='deb-src http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib' state=present
+    - name: install hadoop master packages
+      apt: pkg={{ item }} state=latest force=yes 
+      with_items:
+        - hadoop-yarn-resourcemanager
+        - hadoop-hdfs-namenode
+        - hadoop-yarn-nodemanager
+        - hadoop-hdfs-datanode
+        - hadoop-mapreduce
