@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
-/etc/rc.local
-sleep 10000 
+ipaddress=`ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }'`
+echo "ip = $ipaddress"
+
+
+/etc/rc.local $@ 
+
+
+sleep 100000
 
 
 

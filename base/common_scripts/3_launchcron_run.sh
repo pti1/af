@@ -4,7 +4,7 @@ cd /opt/docker_common_scripts/
 echo "" > /opt/crontab.pti
 for aCron in *cron*.sh
 do
-  if [ "$aCron" != "4_launchcron_run.sh" ]
+  if [ "$aCron" != "3_launchcron_run.sh" ]
   then
      sched=`cat $aCron | grep cron_schedule | sed "s/.*cron_schedule //g"`
 

@@ -23,51 +23,34 @@ RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-ADD common_scripts/* /opt/docker_common_scripts/
-ONBUILD ADD common_scripts/* /opt/docker_common_scripts/
+ADD common_scripts/*build* /opt/docker_common_scripts/
+RUN /opt/docker_common_scripts/1_launchbuild.sh
 
-RUN cd /opt/docker_common_scripts/ && \
-for aScript in *build*.sh; do chmod 777 ./$aScript; done &&\
-for aScript in *build*.sh; do ./$aScript; done 
-
-ONBUILD RUN cd /opt/docker_common_scripts/ && \
-for aScript in *build*.sh; do chmod 777 ./$aScript; done &&\
-for aScript in *build*.sh; do ./$aScript; done
 
 # install core packages
 RUN apt-get update
-RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils git cron
+RUN apt-get install -q -y --force-yes wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils git cron mc
 
 RUN apt-get install -q -y --force-yes openssh-server
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
 
-
 # provide cron
 ADD crontab /etc/
 
-# provide run scripts and cron
-RUN cd /opt/docker_common_scripts/ && \
-echo "#!/bin/bash" > /etc/rc.local && \
-for aScript in *run*.sh; do chmod 777 ./$aScript; done &&\
-for aScript in *run*.sh; do echo "/opt/docker_common_scripts/$aScript > /var/log/$aScript.log" >> /etc/rc.local; done && \
-echo "exit 0" >> /etc/rc.local && \
-cat /etc/rc.local
+ADD common_scripts/* /opt/docker_common_scripts/
 
-ONBUILD RUN cd /opt/docker_common_scripts/ && \
-echo "#!/bin/bash" > /etc/rc.local && \
-for aScript in *run*.sh; do chmod 777 ./$aScript; done &&\
-for aScript in *run*.sh; do echo "/opt/docker_common_scripts/$aScript > /var/log/$aScript.log" >> /etc/rc.local; done && \
-echo "exit 0" >> /etc/rc.local && \
-cat /etc/rc.local
-
+# provide run scripts : it does not need to be in other docker files
+# since script 2_launchrun is generic
+# it also register crons by executing 3_launchcron_run.sh
+RUN echo "#!/bin/bash" > /etc/rc.local && \
+echo "/opt/docker_common_scripts/2_launchrun.sh \$@" >> /etc/rc.local && \
+echo "exit 0" >> /etc/rc.local
 
 
 ADD startup.sh /opt/
-ONBUILD ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]
-ONBUILD CMD ["/opt/startup.sh"]
 
 
 EXPOSE 22 403 

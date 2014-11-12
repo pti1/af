@@ -1,8 +1,35 @@
-#!/usr/bin/env bash
+#/bin/bash
 
-proxyhost="192.168.0.21"
-proxyport="8080"
-isproxy=false
+TEMP=`getopt -o h:p:i: --long proxyhost:,proxyport:,isproxy: -n 'test.sh' -- "$@"`
+eval set -- "$TEMP"
+
+# extract options and their arguments into variables.
+ARG_PROXYHOST='192.168.0.21'
+ARG_PROXYPORT='8080'
+ARG_ISPROXY=true
+while true ; do
+    case "$1" in
+        -h|--proxyhost)
+            case "$2" in
+                *) ARG_PROXYHOST=$2 ; shift 2 ;;
+            esac ;;
+        -p|--proxyport)
+            case "$2" in
+                *) ARG_PROXYPORT=$2 ; shift 2 ;;
+            esac ;;
+       -i|--isproxy)
+            case "$2" in
+                *) ARG_ISPROXY=$2 ; shift 2 ;;
+            esac ;;
+        --) shift ; break ;;
+        *) echo "other option is provided!";;
+    esac
+done
+
+
+proxyhost=$ARG_PROXYHOST
+proxyport=$ARG_PROXYPORT
+isproxy=$ARG_ISPROXY
 
 unset http_proxy
 unset https_proxy

@@ -16,14 +16,25 @@ FROM pti1/base:secondversion
 
 MAINTAINER PTI PTI, pti@coco.fr
 
-RUN apt-get update && \
+
+ADD common_scripts/*build* /opt/docker_common_scripts/
+RUN /opt/docker_common_scripts/1_launchbuild.sh
+
+
+RUN . /root/.bashrc && \
+ export | grep -i proxy && \ 
+ apt-get update && \
  apt-get install -q -y --force-yes build-essential && \
- apt-get install -q -y --force-yes python-pip python-dev git -y && \
- pip install PyYAML jinja2 paramiko && \
+ apt-get install -q -y --force-yes python-pip python-dev git -y 
+
+RUN . /root/.bashrc && \
+ if [ -z "$http_proxy" ]; then pip install PyYAML jinja2 paramiko; else pip install --proxy $http_proxy PyYAML jinja2 paramiko;  fi && \
  git clone https://github.com/ansible/ansible.git && \
  cd ansible && \
  make install && \
  mkdir /etc/ansible 
+
+ADD common_scripts/* /opt/docker_common_scripts/
 
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]

@@ -13,6 +13,8 @@ FROM pti1/chefclient:secondversion
 
 MAINTAINER PTI PTI, pti@coco.fr
 
+ADD common_scripts/*build* /opt/docker_common_scripts/
+RUN /opt/docker_common_scripts/1_launchbuild.sh
 
 
 #RUN echo "deb http://ppa.launchpad.net/rufustfirefly/ganglia/ubuntu precise main" > /etc/apt/sources.list.d/ganglia.list
@@ -42,5 +44,6 @@ RUN cp /etc/ganglia-webfrontend/apache.conf /etc/apache2/sites-enabled/ganglia.c
 
 
 EXPOSE 22 80
+ADD common_scripts/* /opt/docker_common_scripts/
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]

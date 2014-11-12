@@ -3,6 +3,16 @@
 # This script fetches the current external IP Address, writes out an nsupdate file
 # Then performs an nsupdate to our remote server of choice
 # This script should be placed on a 10 minute crontab
+
+ping -c1 dns.example.com
+if [ $? -ne 0 ];
+then
+  echo "dns not ready"
+  exit 0
+fi
+
+echo "dns ready"
+
 ECHO=$(which echo)
 NSUPDATE=$(which nsupdate)
 IP=$(/sbin/ifconfig eth0 | perl -n -e 'if (m/inet addr:([\d\.]+)/g) { print $1 }')
