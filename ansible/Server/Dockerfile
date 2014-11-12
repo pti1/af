@@ -27,7 +27,10 @@ RUN . /root/.bashrc && \
  apt-get install -q -y --force-yes build-essential && \
  apt-get install -q -y --force-yes python-pip python-dev git -y 
 
+ADD get-pip.py /opt/
+
 RUN . /root/.bashrc && \
+ python /opt/get-pip.py && \
  if [ -z "$http_proxy" ]; then pip install PyYAML jinja2 paramiko; else pip install --proxy $http_proxy PyYAML jinja2 paramiko;  fi && \
  git clone https://github.com/ansible/ansible.git && \
  cd ansible && \
