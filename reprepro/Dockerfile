@@ -1,0 +1,59 @@
+FROM pti1/base:secondversion
+#FROM debian:wheezy
+MAINTAINER Bruno Binet <bruno.binet@gmail.com>
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+ADD common_scripts/*build* /opt/docker_common_scripts/
+RUN /opt/docker_common_scripts/1_launchbuild.sh
+
+
+RUN echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" > /etc/apt/sources.list.d/cloudera.list && \
+ echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" >> /etc/apt/sources.list.d/clouderasrc.list && \
+ apt-get update && \
+ apt-get install -yq --no-install-recommends gnupg reprepro openssh-server && \
+ echo "REPREPRO_BASE_DIR=/data/debian" > /etc/environment && \
+ adduser --system --group --shell /bin/bash --uid 600 --disabled-password --no-create-home reprepro && \
+ adduser --system --group --shell /bin/bash --uid 601 --disabled-password --no-create-home apt
+
+ENV REPREPRO_DEFAULT_NAME Reprepro
+
+ADD common_scripts/* /opt/docker_common_scripts/
+
+# create repos configuration
+RUN mkdir /apt && \
+    mkdir /apt/conf && \
+    mkdir /apt/incoming
+
+ADD distributions /apt/conf/
+ADD loaddebs.sh /apt/
+
+
+RUN apt-get -q -y install aptitude
+RUN aptitude -y --download-only install ganglia-monitor rrdtool gmetad ganglia-webfrontend && \
+    mkdir -p /debs/ganglia && \
+    mv /var/cache/apt/archives/* /debs/ganglia && \
+    cd /apt/ && ./loaddebs.sh /debs/ganglia    
+
+RUN yes Yes | aptitude -y --download-only install hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce && \
+    mkdir -p /debs/hadoop && \
+    mv /var/cache/apt/archives/* /debs/hadoop && \
+    cd /apt/ && ./loaddebs.sh /debs/hadoop
+
+
+    
+RUN aptitude -y --download-only install openjdk-7-jdk
+    mkdir -p /debs/java && \
+    mv /var/cache/apt/archives/* /debs/java && \
+    cd /apt/ && ./loaddebs.sh /debs/java
+
+#RUN aptitude -y --download-only install wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils git cron mc openssh-server
+
+ADD sshd_config /sshd_config
+ADD run.sh /run.sh
+RUN chmod +x /run.sh
+
+    

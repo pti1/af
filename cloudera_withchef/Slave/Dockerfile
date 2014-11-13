@@ -19,6 +19,10 @@ MAINTAINER PTI PTI, pti@coco.fr
 #
 
 
+ADD common_scripts/*build* /opt/docker_common_scripts/
+RUN /opt/docker_common_scripts/1_launchbuild.sh
+
+
 RUN apt-get install -y openjdk-7-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
@@ -32,8 +36,9 @@ RUN apt-get update
 
 RUN apt-get install -q -y --force-yes hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce
 
-ADD startup.sh /opt/
+ADD common_scripts/* /opt/docker_common_scripts/
 
+ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]
 
 EXPOSE 7180 7183 7182 7432 50020 50070 50010 50075 8040 8042 47314 13562 8030 8031 46664 57299 53686 50176 38904

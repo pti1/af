@@ -1,7 +1,0 @@
-- hosts: web
-  tasks:
-    - name: add source list
-      apt_repository: repo='deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib' state=present
-      apt_repository: repo='deb-src http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib' state=present
-    - name: Installs apache web server
-      apt: pkg=apache2 state=installed update_cache=true

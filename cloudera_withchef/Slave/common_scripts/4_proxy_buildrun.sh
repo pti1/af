@@ -2,7 +2,7 @@
 
 proxyhost="192.168.0.21"
 proxyport="8080"
-isproxy=true
+isproxy=false
 
 unset http_proxy
 unset https_proxy

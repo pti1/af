@@ -4,6 +4,7 @@ myenv=""
 
 if [[ $@ =~ .*--env.* ]]
 then
+  echo "using env provided in command line"
 else
   myenv="--env=dev"   
 fi 
