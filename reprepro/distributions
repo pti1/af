@@ -1,8 +1,9 @@
 Origin: pascal
 Label: pascal
-Suite: stable
 Codename: precise
-Version: 12.04
-Architectures: amd64 source 
-Components: main restricted universe multiverse #(en fonction de vos besoin)
-Description: Votre Description
+Architectures: amd64 source
+Components: main
+Description: Pascal APT Repository
+SignWith: yes
+DebOverride: override.precise
+DscOverride: override.precise

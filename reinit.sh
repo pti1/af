@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-declare -a files=('proxy.sh' 'nsupdate.sh');
-declare -a pathfiles=('/GIT/af/proxy/proxy.sh' '/GIT/af/bind9/nsupdate.sh');
+declare -a files=('4_proxy_buildrun.sh');
+declare -a pathfiles=('/GIT/af/base/common_scripts/4_proxy_buildrun.sh');
 
 
 i=0

@@ -1,6 +1,6 @@
 FROM pti1/base:secondversion
 #FROM debian:wheezy
-MAINTAINER Bruno Binet <bruno.binet@gmail.com>
+MAINTAINER pti1 <pti1@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
@@ -11,49 +11,58 @@ ADD common_scripts/*build* /opt/docker_common_scripts/
 RUN /opt/docker_common_scripts/1_launchbuild.sh
 
 
-RUN echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" > /etc/apt/sources.list.d/cloudera.list && \
- echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" >> /etc/apt/sources.list.d/clouderasrc.list && \
- apt-get update && \
- apt-get install -yq --no-install-recommends gnupg reprepro openssh-server && \
- echo "REPREPRO_BASE_DIR=/data/debian" > /etc/environment && \
- adduser --system --group --shell /bin/bash --uid 600 --disabled-password --no-create-home reprepro && \
- adduser --system --group --shell /bin/bash --uid 601 --disabled-password --no-create-home apt
+RUN apt-get update && \
+ apt-get install -yq --no-install-recommends reprepro aptitude apache2 && \
+ mkdir -p /var/packages/ubuntu/ && \
+ mkdir /var/packages/ubuntu/conf && \
+ mkdir -p /var/packages/debian/ && \
+ mkdir /var/packages/debian/conf && \
+ touch /var/packages/ubuntu/conf/override.precise
 
-ENV REPREPRO_DEFAULT_NAME Reprepro
+ADD distributions /var/packages/ubuntu/conf/
+ADD options /var/packages/ubuntu/conf/
 
-ADD common_scripts/* /opt/docker_common_scripts/
+ADD loaddebs.sh /opt/
 
-# create repos configuration
-RUN mkdir /apt && \
-    mkdir /apt/conf && \
-    mkdir /apt/incoming
+ADD apache-repo.conf  /etc/apache2/sites-available/repo 
+RUN rm -f /etc/apache2/sites-enabled/000-default && \
+ rm -f /etc/apache2/sites-available/default*
 
-ADD distributions /apt/conf/
-ADD loaddebs.sh /apt/
+RUN apt-get install -yq gnupg dpkg-sig && mkdir /root/.gnupg
+ADD gpgkeys/.gnupg/* /root/.gnupg/
 
 
-RUN apt-get -q -y install aptitude
+
+
+ADD docker_1.5-1_amd64.deb /opt/
+RUN cd /opt/ && ./loaddebs.sh /opt
+
+#ganglia
 RUN aptitude -y --download-only install ganglia-monitor rrdtool gmetad ganglia-webfrontend && \
     mkdir -p /debs/ganglia && \
     mv /var/cache/apt/archives/* /debs/ganglia && \
-    cd /apt/ && ./loaddebs.sh /debs/ganglia    
+    cd /opt/ && ./loaddebs.sh /debs/ganglia
 
-RUN yes Yes | aptitude -y --download-only install hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce && \
-    mkdir -p /debs/hadoop && \
-    mv /var/cache/apt/archives/* /debs/hadoop && \
-    cd /apt/ && ./loaddebs.sh /debs/hadoop
+# cloudera
+RUN echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" > /etc/apt/sources.list.d/cloudera.list && \
+ echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" >> /etc/apt/sources.list.d/clouderasrc.list && \
+ apt-get update && \
+ yes Yes | aptitude -y --download-only install hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce && \
+ mkdir -p /debs/hadoop && \
+ mv /var/cache/apt/archives/* /debs/hadoop && \
+ cd /opt/ && ./loaddebs.sh /debs/hadoop
 
-
-    
-RUN aptitude -y --download-only install openjdk-7-jdk
+# java
+RUN aptitude -y --download-only install openjdk-7-jdk && \
     mkdir -p /debs/java && \
     mv /var/cache/apt/archives/* /debs/java && \
-    cd /apt/ && ./loaddebs.sh /debs/java
+    cd /opt/ && ./loaddebs.sh /debs/java
 
-#RUN aptitude -y --download-only install wget curl inetutils-ping telnet net-tools vim htop dnsutils apt-utils git cron mc openssh-server
 
-ADD sshd_config /sshd_config
-ADD run.sh /run.sh
-RUN chmod +x /run.sh
+
+ADD common_scripts/* /opt/docker_common_scripts/
+
+ADD startup.sh /opt/
+CMD ["/opt/startup.sh"]
 
     

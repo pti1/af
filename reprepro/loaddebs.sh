@@ -1,5 +1,6 @@
 #!/bin/bash
 for paquet in $1/*.deb; do
-  reprepro -b . includedeb precise $paquet;
+   dpkg-sig --sign builder $paquet
+   reprepro -b /var/packages/ubuntu/ includedeb precise $paquet;
 done
 
