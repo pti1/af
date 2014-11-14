@@ -9,6 +9,6 @@ RUN rm -f /etc/apt/sources.list && \
     echo "deb [arch=amd64] http://reprepro.example.com/ubuntu precise main" > /etc/apt/sources.list.d/reprepro.list && \
     echo "deb-src http://reprepro.example.com/ubuntu precise main" >> /etc/apt/sources.list.d/reprepro.list 
 
-
-CMD ["apt-get update && /opt/startup.sh --isproxy=false"]
+ADD common_scripts/* /opt/docker_common_scripts/
+#CMD ["apt-get update && /opt/startup.sh --isproxy=false"]
 
