@@ -1,0 +1,10 @@
+- name: apply common configuration for hadoop
+  hosts: hadoop
+  gather_facts: no
+  roles:
+   - cloudera-base
+- name: configure hadoop master
+  hosts: hadoopmaster
+  gather_facts: yes
+  roles:
+   - cloudera-master

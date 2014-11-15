@@ -1,0 +1,10 @@
+[hadoopmaster]
+hadoopmaster.example.com
+
+[hadoopslave]
+hadoopslave1.example.com
+hadoopslave2.example.com
+
+[hadoop:children]
+hadoopmaster
+hadoopslave

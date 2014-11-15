@@ -32,11 +32,6 @@ RUN apt-get install -yq gnupg dpkg-sig && mkdir /root/.gnupg
 ADD gpgkeys/.gnupg/* /root/.gnupg/
 
 
-
-
-ADD docker_1.5-1_amd64.deb /opt/
-RUN cd /opt/ && ./loaddebs.sh /opt
-
 #ganglia
 RUN aptitude -y --download-only install ganglia-monitor rrdtool gmetad ganglia-webfrontend && \
     mkdir -p /debs/ganglia && \

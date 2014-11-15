@@ -1,0 +1,10 @@
+- name: cdh5 repo
+  apt_repository: repo="{{ hadoop_repo }}" state=present
+- name: install jdk 7
+  apt: pkg='openjdk-7-jdk' state=latest
+- name: install hadoop all packages
+  apt: pkg='{{ item }}' state=latest
+  with_items:
+   - hadoop-yarn-nodemanager
+   - hadoop-hdfs-datanode
+   - hadoop-mapreduce

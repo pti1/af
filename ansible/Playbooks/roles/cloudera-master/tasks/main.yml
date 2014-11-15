@@ -1,0 +1,17 @@
+- name: install hadoop master packages
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+   - hadoop-yarn-resourcemanager
+   - hadoop-hdfs-namenode
+- name: copy configuration
+  tags: deploy
+  copy: src=mapred-site.xml dest=/etc/hadoop/conf.empty/ mode=0640 
+  notify:
+    - restart namenode
+- name: Pushes configuration
+  template: src={{ item }} dest=/etc/hadoop/conf.empty/ mode=0640 owner=root group=root
+  with_items:
+    - core-site.xml.j2
+    - yarn-site.xml.j2
+  notify:
+    - restart namenode

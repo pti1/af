@@ -1,0 +1,10 @@
+- name: cdh5 repo
+  apt_repository: repo='$hadoop-repo' state=present
+- name: cdh5 contrib repo
+  apt_repository: repo='$hadoop-src-repo' state=present
+- name: install hadoop all packages
+  apt: pkg={{ item }} state=latest force=yes 
+  with_items:
+   - hadoop-yarn-nodemanager
+   - hadoop-hdfs-datanode
+   - hadoop-mapreduce

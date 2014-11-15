@@ -6,7 +6,7 @@ eval set -- "$TEMP"
 # extract options and their arguments into variables.
 ARG_PROXYHOST='192.168.0.21'
 ARG_PROXYPORT='8080'
-ARG_ISPROXY=true
+ARG_ISPROXY=false
 while true ; do
     case "$1" in
         -h|--proxyhost)
