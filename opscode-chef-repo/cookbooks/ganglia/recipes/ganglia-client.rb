@@ -25,7 +25,11 @@ end
 nodeinenv = search(:node,"chef_environment:#{node.chef_environment}")
 nodeinenv.sort!{ |a, b| a.name <=> b.name}
 
-electednode=nodeinenv[0]
+mastername = "notyet"
+if nodeinenv.size > 0 then
+  electednode=nodeinenv[0]
+  mastername = electednode.name
+end
 
 template "/etc/ganglia/gmond.conf" do
     source 'gmond.erb'
@@ -33,7 +37,7 @@ template "/etc/ganglia/gmond.conf" do
     owner 'root'
     variables(
       :env => node.chef_environment,
-      :clustergmond => electednode.name
+      :clustergmond => mastername
     )
 
     notifies :restart, "service[ganglia-monitor]", :delayed

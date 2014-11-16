@@ -4,6 +4,7 @@ myenv=""
 
 if [[ $@ =~ .*--env.* ]]
 then
+ echo "another env provided"
 else
   myenv="--env=dev"
 fi

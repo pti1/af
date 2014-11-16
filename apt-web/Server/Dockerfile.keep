@@ -10,31 +10,37 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 ADD common_scripts/*build* /opt/docker_common_scripts/
 RUN /opt/docker_common_scripts/1_launchbuild.sh
 
-RUN rm -f /etc/apt/apt.conf.d/docker-clean
-
 
 RUN apt-get update && \
  apt-get install -yq --no-install-recommends aptitude apache2 && \
- mkdir /var/www/debian && \
- mv /var/cache/apt/archives/*.deb /var/www/debian
+ mkdir /var/www/debian
 
-RUN apt-get install -q -y --force-yes ganglia-monitor rrdtool gmetad ganglia-webfrontend  && \
-     mv /var/cache/apt/archives/*.deb /var/www/debian
+
+
+#ganglia
+RUN cd /var/www/debian && \
+    apt-get --print-uris --yes install ganglia-monitor rrdtool gmetad ganglia-webfrontend | grep ^\' | cut -d\' -f2 >ganglia.list && \
+    wget --input-file ganglia.list
+
+
 
 # cloudera
 RUN echo "deb [arch=amd64] http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" > /etc/apt/sources.list.d/cloudera.list && \
  echo "deb-src http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib" >> /etc/apt/sources.list.d/clouderasrc.list && \
  apt-get update && \
- apt-get install -q -y --force-yes hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce && \
- mv /var/cache/apt/archives/*.deb /var/www/debian
+ cd /var/www/debian && \
+ apt-get --print-uris --yes install hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce | grep ^\' | cut -d\' -f2 >cloudera.list && \
+ wget --input-file cloudera.list
 
 # java
-RUN apt-get install -q -y --force-yes openjdk-7-jdk && \
-  mv /var/cache/apt/archives/*.deb /var/www/debian
+RUN cd /var/www/debian && \ 
+    apt-get --print-uris --yes install openjdk-7-jdk | grep ^\' | cut -d\' -f2 > java.list && \
+    wget --input-file java.list
 
 # python-apt
-RUN apt-get install -q -y --force-yes python-apt && \
-  mv /var/cache/apt/archives/*.deb /var/www/debian
+RUN cd /var/www/debian && \ 
+    apt-get --print-uris --yes install python-apt | grep ^\' | cut -d\' -f2 > python.list && \
+    wget --input-file python.list
 
 
 RUN cd /var/www && \
