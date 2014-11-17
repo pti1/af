@@ -22,6 +22,15 @@
   when: mastername_changed|success
 - name: create user
   user: name=pascal home=/home/pascal
+- name: start all services
+  service: name={{ item }} state=started
+  with_items:
+    - hadoop-hdfs-namenode
+    - hadoop-hdfs-datanode
+    - hadoop-yarn-resourcemanager
+    - haddo-yarn-nodemanager
+- name: wait for hdfs to be ready
+  wait_for: port=8020 delay=5 
 - name: create hdfs config
   shell: "{{item}}"
   remote_user: hdfs
