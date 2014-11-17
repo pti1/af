@@ -21,8 +21,8 @@
  <!--pti-->
   <property>
     <name>yarn.resourcemanager.hostname</name>
-      {% for backend in groups['hadoopmaster'] %}
-        <value>{{ hostvars[backend]['ansible_hostname'] }}</value>
+      {% for master in groups['hadoopmaster'] %}
+        <value>{{ hostvars[master]['ansible_fqdn'] }}</value>
       {% endfor %}
   </property>
 
@@ -57,8 +57,8 @@
   <property>
     <description>Where to aggregate logs to.</description>
     <name>yarn.nodemanager.remote-app-log-dir</name>
-    {% for backend in groups['hadoopmaster'] %}
-        <value>hdfs://{{ hostvars[backend]['ansible_hostname'] }}:8020/var/log/hadoop-yarn/apps</value>
+    {% for master in groups['hadoopmaster'] %}
+        <value>hdfs://{{ hostvars[master]['ansible_fqdn'] }}:8020/var/log/hadoop-yarn/apps</value>
     {% endfor %}
 
   </property>

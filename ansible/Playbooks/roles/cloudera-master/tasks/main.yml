@@ -5,13 +5,28 @@
    - hadoop-hdfs-namenode
 - name: copy configuration
   tags: deploy
-  copy: src=mapred-site.xml dest=/etc/hadoop/conf.empty/ mode=0640 
+  copy: src=mapred-site.xml dest=/etc/hadoop/conf.empty/ owner=root group=hadoop mode=u+rwx 
+  register: mastername_changed
   notify:
     - restart namenode
 - name: Pushes configuration
-  template: src={{ item }} dest=/etc/hadoop/conf.empty/ mode=0640 owner=root group=root
+  template: src={{ item.src }} dest=/etc/hadoop/conf.empty/{{ item.dest }} mode=u+rwx owner=root group=hadoop
   with_items:
-    - core-site.xml.j2
-    - yarn-site.xml.j2
+    - { src: 'core-site.xml.j2', dest: 'core-site.xml' } 
+    - { src: 'yarn-site.xml.j2', dest: 'yarn-site.xml' }
   notify:
     - restart namenode
+- name: format namenode
+  shell: su -c "hdfs namenode -format" hdfs 
+  register: format_namenode
+  when: mastername_changed|success
+- name: create hdfs config
+  shell: su -c "hadoop fs -rm -r /tmp && \
+  hadoop fs -mkdir -p /tmp/hadoop-yarn/staging && \
+  hadoop fs -chmod -R 777 /tmp/hadoop-yarn/staging && \
+  hadoop fs -mkdir -p /tmp/hadoop-yarn/staging/history/done_intermediate && \
+  hadoop fs -chown -R mapred:mapred /tmp/hadoop-yarn/staging && \
+  hadoop fs -mkdir -p /var/log/hadoop-yarn && \
+  hadoop fs -chown yarn:mapred /var/log/hadoop-yarn && \
+  hadoop fs -chmod -R 1777 /tmp" hdfs 
+#- meta: flush_handlers
