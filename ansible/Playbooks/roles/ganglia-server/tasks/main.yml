@@ -1,4 +1,4 @@
-- name: install hadoop master packages
+- name: install gangia master packages
   apt: pkg={{ item }} state=latest force=yes
   with_items:
    - hadoop-yarn-resourcemanager
@@ -17,12 +17,8 @@
     - { src: 'hdfs-site.xml.j2', dest: 'hdfs-site.xml' }
   notify:
     - restart namenode
-- name: create dirs
-  file: path=/mnt/ext/hadoop/hdfs/namenode state=directory mode="u+rw" owner=hdfs group=hdfs 
 - name: format namenode
-  shell: hdfs namenode -format -clusterid mycluster -force -nonInteractive
-  su: yes
-  su_user: hdfs
+  shell: su -c "hdfs namenode -format -clusterid mycluster -force -nonInteractive" hdfs 
   when: mastername_changed.changed
 - name: create user
   user: name=pascal home=/home/pascal
@@ -64,7 +60,7 @@
 - name: show information
   debug: msg={{ item }}
   with_items:
-   - "namenode uri: {{ host_ip.stdout }}:50070"
-   - "yarn uri: {{ host_ip.stdout }}:8088"
+   - "namenode uri: {{ host_ip }}:50070"
+   - "yarn uri: {{ host_ip }}:8088"
 
 #- meta: flush_handlers

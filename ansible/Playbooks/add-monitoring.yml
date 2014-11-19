@@ -1,8 +1,8 @@
-- name: apply common configuration for hadoop
+- name: add ganglia monitoring
   hosts: hadoop
-  gather_facts: no
+  gather_facts: yes
   roles:
-   - cloudera-base
+   - ganglia-client
 - name: configure hadoop master
   hosts: hadoopmaster
   gather_facts: yes

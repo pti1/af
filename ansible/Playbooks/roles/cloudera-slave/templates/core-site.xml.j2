@@ -1,0 +1,8 @@
+<configuration>
+  <property>
+      <name>fs.default.name</name>
+{% for master in groups['hadoopmaster'] %}
+     <value>hdfs://{{ hostvars[master]['ansible_fqdn'] }}:8020</value>
+{% endfor %}
+  </property>
+</configuration>

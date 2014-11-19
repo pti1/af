@@ -1,2 +1,0 @@
-hadoop-repo: deb [arch=amd64] http://reprepro.example.com/ubuntu precise main
-hadoop-src-repo: deb-src http://reprepro.example.com/ubuntu precise main 

@@ -1,0 +1,21 @@
+- name: copy configuration
+  tags: deploy
+  copy: src=mapred-site.xml dest=/etc/hadoop/conf.empty/ owner=root group=hadoop mode=u+rwx 
+  register: mastername_changed
+  notify:
+    - restart datanode
+- name: Pushes configuration
+  template: src={{ item.src }} dest=/etc/hadoop/conf.empty/{{ item.dest }} mode=u+rwx owner=root group=hadoop
+  with_items:
+    - { src: 'core-site.xml.j2', dest: 'core-site.xml' } 
+    - { src: 'yarn-site.xml.j2', dest: 'yarn-site.xml' }
+  notify:
+    - restart datanode
+    - restart nodemanager
+- name: create user
+  user: name=pascal home=/home/pascal
+- name: start all services
+  service: name={{ item }} state=started
+  with_items:
+    - hadoop-hdfs-datanode
+    - hadoop-yarn-nodemanager
