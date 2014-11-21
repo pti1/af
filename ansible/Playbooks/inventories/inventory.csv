@@ -1,0 +1,4 @@
+hadoopmaster.example.com	gangliaclient,hadoopmaster	dev	isgmetad=yes
+hadoopslave1.example.com	hadoopslave	dev	hadoop
+hadoopslave2.example.com	hadoopslave	dev	hadoop
+gangliaserver.example.com	gangliaserver	infra	ganglia

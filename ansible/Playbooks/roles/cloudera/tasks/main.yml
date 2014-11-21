@@ -1,0 +1,6 @@
+- include: base.yml
+- include: master.yml  
+  when: "is_hadoop_master == 'yes'"
+- include: slave.yml
+  when: "is_hadoop_master != 'yes'"
+

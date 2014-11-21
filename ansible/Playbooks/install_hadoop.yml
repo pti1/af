@@ -1,0 +1,14 @@
+- name: configure hadoop master
+  hosts: hadoopmaster
+  vars_files:
+    - "{{ varfile }}"
+  gather_facts: yes
+  roles:
+   - { role: cloudera, is_hadoop_master: 'yes', blocksize: '10m',  blockreplication: 2 }
+- name: configure hadoop slaves
+  hosts: hadoopslave
+  vars_files:
+    - "{{ varfile }}"  
+  gather_facts: yes
+  roles:
+   - { role: cloudera}

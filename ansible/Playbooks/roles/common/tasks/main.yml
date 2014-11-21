@@ -1,0 +1,15 @@
+- name: display host variables
+  debug: msg='{{ variables }}'
+- name: include env variables
+  include_vars2: 'group_vars/{{ variables.env }}/{{ item }}'
+  with_items: group_names
+- name: include all variables
+  include_vars2: 'group_vars/all/{{ item }}'
+  with_items: group_names
+- name: set facts
+  set_fact: "{{ item.key }}={{ item.value }}"
+  with_dict: variables
+- name: group all servers together
+  group_by: key="isgmetad_{{ isgmetad }}"
+  ignore_errors: yes 
+    

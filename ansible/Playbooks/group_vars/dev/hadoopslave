@@ -1,0 +1,2 @@
+hadoop_repo: deb http://aptrepo.example.com debian/
+hadoop_src_repo: deb-src http://aptrepo.example.com debian/

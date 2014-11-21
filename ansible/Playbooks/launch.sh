@@ -40,3 +40,7 @@ docker stop hadoopslave2
 docker rm hadoopslave2
 docker run -d -t --name hadoopslave2 -h hadoopslave2.example.com --dns $(docker inspect -f '{{.NetworkSettings.IPAddress}}' dns) --dns-search example.com --link dns:dns --volumes-from dns  --volumes-from ansibleserver pti1/aptweb_client:secondversion /opt/startup.sh --isproxy=false
 
+docker stop gangliaserver
+docker rm gangliaserver
+docker run -d -t --name gangliaserver -h gangliaserver.example.com --dns $(docker inspect -f '{{.NetworkSettings.IPAddress}}' dns) --dns-search example.com --link dns:dns --volumes-from dns  --volumes-from ansibleserver pti1/aptweb_client:secondversion /opt/startup.sh --isproxy=false
+

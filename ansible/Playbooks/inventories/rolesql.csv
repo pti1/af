@@ -1,0 +1,1 @@
+gangliaserver	gmetaconf	select from inventory where ansiblegroups regexp '.*gangliaclient.*' and variables regexp 

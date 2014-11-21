@@ -1,0 +1,9 @@
+- name: restart namenode
+  service: name=hadoop-hdfs-namenode state=restarted
+- name: restart resourcemanager
+  service: name=hadoop-hdfs-resourcemanager state=restarted
+- name: restart datanode
+  service: name=hadoop-hdfs-datanode state=restarted
+- name: restart nodemanager
+  service: name=hadoop-yarn-nodemanager state=restarted
+

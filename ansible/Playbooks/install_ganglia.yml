@@ -1,0 +1,16 @@
+#  with_items: group_names
+- name: common roles
+  hosts: all
+  gather_facts: no
+  roles:
+   - { role: common }
+- name: configure ganglia server
+  hosts: gangliaserver
+  gather_facts: yes
+  roles:
+   - { role: ganglia, is_server: 'yes' }
+- name: configure ganglia slaves
+  hosts: gangliaclient
+  gather_facts: yes
+  roles:
+   - { role: ganglia}
