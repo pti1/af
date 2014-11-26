@@ -9,7 +9,7 @@
 - name: set facts
   set_fact: "{{ item.key }}={{ item.value }}"
   with_dict: variables
-- name: group all servers together
-  group_by: key="isgmetad_{{ isgmetad }}"
-  ignore_errors: yes 
+#- name: group all servers together
+#  group_by: key="isgmetad_{{ isgmetad }}"
+#  ignore_errors: yes 
     

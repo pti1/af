@@ -36,6 +36,10 @@ RUN apt-get install -q -y --force-yes openjdk-7-jdk && \
 RUN apt-get install -q -y --force-yes python-apt && \
   mv /var/cache/apt/archives/*.deb /var/www/debian
 
+# spark
+RUN apt-get install -q -y --force-yes spark-core spark-worker spark-master spark-python spark-history-server hadoop-client && \ 
+  mv /var/cache/apt/archives/*.deb /var/www/debian
+
 
 RUN cd /var/www && \
  apt-get install -y dpkg-dev && \
