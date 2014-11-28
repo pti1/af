@@ -8,8 +8,12 @@
     <value>{{ blocksize }}</value>
   </property>
  <property>
-   <name>dfs.name.dir</name>
-    <value>/mnt/ext/hadoop/hdfs/namenode</value>
-  </property>
-</configuration>
+   <name>dfs.namenode.name.dir</name>
+   <value>file:///data/namenode/1/nn,file:///data/namenode/2/nn,file:///data/namenode/3/nn</value>
+ </property>
 
+ <property>
+  <name>dfs.datanode.data.dir</name>
+  <value>file:///data/datanode/1/dn,file:///data/datanode/2/dn,file:///data/datanode/3/dn</value>
+ </property>
+</configuration>

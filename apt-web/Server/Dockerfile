@@ -37,7 +37,15 @@ RUN apt-get install -q -y --force-yes python-apt && \
   mv /var/cache/apt/archives/*.deb /var/www/debian
 
 # spark
-RUN apt-get install -q -y --force-yes spark-core spark-worker spark-master spark-python spark-history-server hadoop-client && \ 
+RUN apt-get install -q -y --force-yes spark-core spark-worker spark-master spark-python spark-history-server hadoop-client scala && \ 
+  mv /var/cache/apt/archives/*.deb /var/www/debian
+
+# hadoop history server
+RUN apt-get install -q -y --force-yes hadoop-mapreduce-historyserver hadoop-yarn-proxyserver hadoop-hdfs-secondarynamenode && \
+  mv /var/cache/apt/archives/*.deb /var/www/debian
+
+# hadoop hive
+RUN apt-get install -q -y --force-yes hive hive-metastore hive-server2 mysql-server libmysql-java chkconfig python-mysqldb && \
   mv /var/cache/apt/archives/*.deb /var/www/debian
 
 

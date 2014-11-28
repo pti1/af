@@ -1,0 +1,31 @@
+- name: spark - install spark packages
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+   - spark-core
+   - spark-master
+   - spark-worker
+   - spark-history-server
+   - spark-python
+   - scala
+
+- name: spark - copy configuration
+  copy: src=utils.sh dest=/usr/lib/spark/bin/ owner=root group=hadoop mode=u+rwx
+
+- name: spark - copy configuration
+  copy: src=spark-env.sh dest=/etc/spark/conf/ owner=root group=hadoop mode=u+rwx
+
+- name: spark - provide assembly jar
+  shell: source /etc/spark/conf/spark-env.sh && \
+         hdfs dfs -mkdir -p /user/spark/share/lib && \
+         hdfs dfs -put /usr/lib/spark/assembly/lib/spark-assembly-h*.jar /user/spark/share/lib/spark-assembly.jar
+         update-alternatives --set hadoop-conf /etc/hadoop/conf.pti_cluster
+  args:
+    su: yes
+    su_user: hdfs
+    creates: /etc/hadoop/conf.pti_cluster
+
+- name: spark - debug message
+  debug: msg="{{ item }}"
+  with_items:
+    - "to launch spark-shell: MASTER=yarn-client spark-shell"
+    - "/usr/lib/spark/bin/spark-submit --class org.apache.spark.examples.SparkPi --master yarn-cluster --num-executors 3 /usr/lib/spark/examples/lib/spark-examples*.jar 3"

@@ -1,20 +1,38 @@
-- name: copy configuration
+- name: hadoopslave - create dirs
+  file: path={{ item }} state=directory mode="u+rw" owner=hdfs group=hdfs
+  with_items:
+    - /data/datanode/1/dn
+    - /data/datanode/2/dn
+    - /data/datanode/3/dn
+
+- name: hadoopmaster - copy configuration
+  shell: cp -r /etc/hadoop/conf.empty /etc/hadoop/conf.pti_cluster && \
+         update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.pti_cluster 50 && \
+         update-alternatives --set hadoop-conf /etc/hadoop/conf.pti_cluster
+  args:
+    creates: /etc/hadoop/conf.pti_cluster
+
+
+- name: hadoopslave - copy configuration
   tags: deploy
-  copy: src=mapred-site.xml dest=/etc/hadoop/conf.empty/ owner=root group=hadoop mode=u+rwx 
+  copy: src=mapred-site.xml dest=/etc/hadoop/conf.pti_cluster/ owner=root group=hadoop mode=u+rwx 
   register: mastername_changed
   notify:
     - restart datanode
-- name: Pushes configuration
-  template: src={{ item.src }} dest=/etc/hadoop/conf.empty/{{ item.dest }} mode=u+rwx owner=root group=hadoop
+
+- name: hadoopslave -Pushes configuration
+  template: src={{ item.src }} dest=/etc/hadoop/conf.pti_cluster/{{ item.dest }} mode=u+rwx owner=root group=hadoop
   with_items:
     - { src: 'core-site.xml.j2', dest: 'core-site.xml' } 
     - { src: 'yarn-site.xml.j2', dest: 'yarn-site.xml' }
   notify:
     - restart datanode
     - restart nodemanager
-- name: create user
+
+- name: hadoopslave - create user
   user: name=pascal home=/home/pascal
-- name: start all services
+
+- name: hadoopslave - start all services
   service: name={{ item }} state=started
   with_items:
     - hadoop-hdfs-datanode

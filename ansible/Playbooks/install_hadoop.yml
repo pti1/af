@@ -1,14 +1,21 @@
+- name: common roles
+  hosts: all
+  gather_facts: no
+  roles:
+   - { role: common }
+
 - name: configure hadoop master
   hosts: hadoopmaster
   vars_files:
     - "{{ varfile }}"
-  gather_facts: yes
+  gather_facts: no
   roles:
    - { role: cloudera, is_hadoop_master: 'yes', blocksize: '10m',  blockreplication: 2 }
+
 - name: configure hadoop slaves
   hosts: hadoopslave
   vars_files:
     - "{{ varfile }}"  
-  gather_facts: yes
+  gather_facts: no
   roles:
    - { role: cloudera}

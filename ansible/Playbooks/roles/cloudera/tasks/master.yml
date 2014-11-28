@@ -1,31 +1,58 @@
-- name: install hadoop master packages
+- name: hadoopmaster - install hadoop master packages
   apt: pkg={{ item }} state=latest force=yes
   with_items:
    - hadoop-yarn-resourcemanager
    - hadoop-hdfs-namenode
-- name: copy configuration
+
+- name: hadoopmaster - install history server ....
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+   - hadoop-mapreduce-historyserver
+   - hadoop-yarn-proxyserver
+   - hadoop-hdfs-secondarynamenode
+
+- name: hadoopmaster - copy configuration
+  shell: cp -r /etc/hadoop/conf.empty /etc/hadoop/conf.pti_cluster && \
+         update-alternatives --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.pti_cluster 50 && \
+         update-alternatives --set hadoop-conf /etc/hadoop/conf.pti_cluster
+  args:
+    creates: /etc/hadoop/conf.pti_cluster
+
+- name: hadoopmaster - copy configuration
   tags: deploy
-  copy: src=mapred-site.xml dest=/etc/hadoop/conf.empty/ owner=root group=hadoop mode=u+rwx 
+  copy: src=mapred-site.xml dest=/etc/hadoop/conf.pti_cluster/ owner=root group=hadoop mode=u+rwx 
   register: mastername_changed
   notify:
     - restart namenode
-- name: Pushes configuration
-  template: src={{ item.src }} dest=/etc/hadoop/conf.empty/{{ item.dest }} mode=u+rwx owner=root group=hadoop
+
+- name: hadoopmaster - Pushes configuration
+  template: src={{ item.src }} dest=/etc/hadoop/conf.pti_cluster/{{ item.dest }} mode=u+rwx owner=root group=hadoop
   with_items:
     - { src: 'core-site.xml.j2', dest: 'core-site.xml' } 
     - { src: 'yarn-site.xml.j2', dest: 'yarn-site.xml' }
     - { src: 'hdfs-site.xml.j2', dest: 'hdfs-site.xml' }
   notify:
     - restart namenode
-- name: create dirs
-  file: path=/mnt/ext/hadoop/hdfs/namenode state=directory mode="u+rw" owner=hdfs group=hdfs 
-- name: format namenode
+
+- name: hadoopmaster - create dirs
+  file: path={{ item }} state=directory mode="u+rw" owner=hdfs group=hdfs 
+  with_items:
+    - /data/namenode/1/nn
+    - /data/namenode/2/nn
+    - /data/namenode/3/nn
+    - /data/datanode/1/dn
+    - /data/datanode/2/dn
+    - /data/datanode/3/dn
+
+- name: hadoopmaster - format namenode
   shell: hdfs namenode -format -clusterid mycluster -force -nonInteractive
   su: yes
   su_user: hdfs
   when: mastername_changed.changed
-- name: create user
+
+- name: hadoopmaster - create user
   user: name=pascal home=/home/pascal
+
 - name: start all services
   service: name={{ item }} state=started
   with_items:
@@ -34,7 +61,7 @@
     - hadoop-yarn-resourcemanager
     - hadoop-yarn-nodemanager
 - name: wait for hdfs to be ready
-  shell: curl {{ ansible_fqdn }}:50070
+  shell: curl {{ inventory_hostname }}:50070
   register: hdfs_ready
   until:  hdfs_ready.stdout.find("Hadoop Administration") != -1
   retries: 5
@@ -59,7 +86,7 @@
     - hadoop fs -mkdir -p /user/pascal
     - hadoop fs -chown pascal:pascal /user/pascal
 - name: Get the host part of the IP 
-  shell: host {{ ansible_fqdn }} | awk '{print $4}' 
+  shell: host {{ inventory_hostname }} | awk '{print $4}' 
   register: host_ip 
 - name: show information
   debug: msg={{ item }}

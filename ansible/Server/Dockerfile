@@ -50,5 +50,6 @@ ADD common_scripts/* /opt/docker_common_scripts/
 ADD startup.sh /opt/
 CMD ["/opt/startup.sh"]
 
+RUN apt-get install -q -y --force-yes sqlite3 
 
 EXPOSE 22

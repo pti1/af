@@ -6,11 +6,16 @@
    - { role: common }
 - name: configure ganglia server
   hosts: gangliaserver
-  gather_facts: yes
+  gather_facts: no
   roles:
    - { role: ganglia, is_server: 'yes' }
+- name: configure ganglia hub
+  hosts: gangliahub
+  gather_facts: no
+  roles:
+   - { role: ganglia}
 - name: configure ganglia slaves
   hosts: gangliaclient
-  gather_facts: yes
+  gather_facts: no
   roles:
    - { role: ganglia}

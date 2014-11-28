@@ -1,0 +1,25 @@
+#- name: hive - configure mysqlserver
+#  shell: echo "mysql-server mysql-server/root_password password root" | debconf-set-selections && \
+#         echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections 
+#  run_once: true
+
+
+- name: hive - install hive packages
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+   - hive
+   - hive-metastore
+   - hive-server2
+#   - mysql-server
+#   - python-mysqldb
+#   - libmysql-java
+
+- name: hive - start all services
+  service: name={{ item }} state=started
+  with_items:
+    - hive-metastore
+    - hive-server2
+
+- name: hive - remove file
+  shell: rm -f /var/lib/hive/metastore/metastore_db/dbex.lck
+

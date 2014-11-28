@@ -9,6 +9,9 @@ echo "ansible server: $ipaddress"
 
 #echo -e  'y\n'|ssh-keygen -q -t rsa -N "" -f ~/.ssh/id_rsa && \
 #cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+cd /playbooks/library2 
+./deploy.sh
+
 
 
 echo "SLEEPING...."

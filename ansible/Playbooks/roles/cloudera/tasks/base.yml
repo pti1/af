@@ -8,3 +8,4 @@
    - hadoop-yarn-nodemanager
    - hadoop-hdfs-datanode
    - hadoop-mapreduce
+   - hadoop-client
